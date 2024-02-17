@@ -25,7 +25,7 @@ def dettach_files_from_messages(messages, destination: Path):
 def _dettach_file_from_message(message: EmailMessage, destination: Path):
     date = datetime.datetime.strptime(message['Date'], DATE_TIME_INPUT_FORMAT).strftime(DATE_TIME_OUTPUT_FORMAT)
     subject = message['Subject']
-    attachment_name = f'{date}_{subject}.xml'
+    attachment_name = f'{date}_{subject}.xlsx'
     for part in message.walk():
         if part.get('Content-Disposition'):
             attachment_path = destination.joinpath(attachment_name)

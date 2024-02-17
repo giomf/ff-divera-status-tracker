@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 import argparse
-import fetcher
 import sys
 import email
 from pathlib import Path
 from email.message import EmailMessage
 
-DETTACHED_FILES_DIRECTORY = Path('dettached_files')
-        
+import aggregator
+import fetcher
+
+_DETTACHED_FILES_DIRECTORY = Path('dettached_files')
+_AGGREGATED_OUTPUT_PATH = Path('aggregated_status.xlsx')
+
 def main() -> int:
     parser = argparse.ArgumentParser(description='Divera status tracker')
     subparser = parser.add_subparsers(dest='command')
@@ -18,11 +21,19 @@ def main() -> int:
     parser_fetch.add_argument('--password', type=str, required=True)
     parser_fetch.add_argument('--subject', type=str, required=True)
 
+    parser_aggregator = subparser.add_parser('aggregate')
+
+
     args = parser.parse_args()
     if args.command == 'fetch':
-        DETTACHED_FILES_DIRECTORY.mkdir(exist_ok=True)
+        _DETTACHED_FILES_DIRECTORY.mkdir(exist_ok=True)
         messages = fetcher.fetch_messages(args.host,  args.email, args.password, args.subject)
-        fetcher.dettach_files_from_messages(messages, DETTACHED_FILES_DIRECTORY)
+        fetcher.dettach_files_from_messages(messages, _DETTACHED_FILES_DIRECTORY)
+    elif args.command == 'aggregate':
+        if not _DETTACHED_FILES_DIRECTORY.exists:
+            print('No attachements to aggregate')
+            sys.exit(1)
+        aggregator.aggregate(_DETTACHED_FILES_DIRECTORY, _AGGREGATED_OUTPUT_PATH)
     else:
         parser.print_help()
     return 0
