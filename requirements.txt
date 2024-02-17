@@ -1,0 +1,12 @@
+distlib==0.3.7
+docstring-to-markdown==0.13
+filelock==3.13.1
+IMAPClient==3.0.1
+jedi==0.19.1
+parso==0.8.3
+platformdirs==4.0.0
+pluggy==1.4.0
+python-lsp-jsonrpc==1.1.2
+python-lsp-server==1.10.0
+ujson==5.8.0
+virtualenv==20.25.0
