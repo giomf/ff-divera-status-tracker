@@ -10,7 +10,7 @@ import fetcher
 import status
 
 _ATTACHMENTS_DIRECTORY = Path('output/attachments')
-_AGGREGATED_OUTPUT = 'output/status.xlsx'
+_STATUS_OUTPUT = 'output/status.xlsx'
 _ON_DUTY_OUTPUT = 'output/on-duty.xlsx'
 
 def main() -> int:
@@ -24,25 +24,26 @@ def main() -> int:
     parser_fetch.add_argument('--subject', type=str, required=True, help='Subject for filtering')
 
     parser_aggregator = subparser.add_parser('aggregate')
-    parser_aggregator.add_argument('--output', type=str, help='Output path', default=_AGGREGATED_OUTPUT)
+    parser_aggregator.add_argument('--output', type=str, help='Output path', default=_STATUS_OUTPUT)
 
-    parser_status = subparser.add_parser('status')
-    parser_status.add_argument('--input', type=str, help='Input path', default=_AGGREGATED_OUTPUT)
-    parser_status.add_argument('--off-duty-keyword', required=True, type=str, help='Keyword to use to filter for off duty')
-    parser_status.add_argument('--output', type=str, help='Output path', default=_ON_DUTY_OUTPUT)
+    parser_on_duty = subparser.add_parser('on-duty')
+    parser_on_duty.add_argument('--input', type=str, help='Input path', default=_STATUS_OUTPUT)
+    parser_on_duty.add_argument('--off-duty-keyword', required=True, type=str, help='Keyword to use to filter for off duty')
+    parser_on_duty.add_argument('--output', type=str, help='Output path', default=_ON_DUTY_OUTPUT)
 
 
     args = parser.parse_args()
     if args.command == 'fetch':
         _ATTACHMENTS_DIRECTORY.mkdir(exist_ok=True, parents=True)
-        messages = fetcher.fetch_messages(args.host,  args.email, args.password, args.subject)
-        fetcher.dettach_files_from_messages(messages, _ATTACHMENTS_DIRECTORY)
+        fetcher.fetch_messages(args.host, args.email, args.password, args.subject, _ATTACHMENTS_DIRECTORY)
+        aggregator.aggregate(_ATTACHMENTS_DIRECTORY, _STATUS_OUTPUT)
+
     elif args.command == 'aggregate':
         if not _ATTACHMENTS_DIRECTORY.exists():
             print('No attachements to aggregate')
             sys.exit(1)
         aggregator.aggregate(_ATTACHMENTS_DIRECTORY, Path(args.output))
-    elif args.command == 'status':
+    elif args.command == 'on-duty':
         status.calculate_on_duty_percentage(Path(args.input), args.off_duty_keyword, Path(args.output))
     else:
         parser.print_help()

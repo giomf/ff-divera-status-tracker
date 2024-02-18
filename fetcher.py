@@ -7,7 +7,7 @@ import email
 DATE_TIME_INPUT_FORMAT = '%a, %d %b %Y %H:%M:%S %z'
 DATE_TIME_OUTPUT_FORMAT = '%Y-%m-%dT%H-%M-%S'
 
-def fetch_messages(host: str, user: str, password: str, subject: str):
+def fetch_messages(host: str, user: str, password: str, subject: str, output: Path):
     # context manager ensures the session is cleaned up
     with IMAPClient(host, use_uid=True) as client:
         client.login(user, password)
@@ -15,9 +15,9 @@ def fetch_messages(host: str, user: str, password: str, subject: str):
 
         messages = client.search(['SUBJECT', subject])
         response = client.fetch(messages, ['RFC822'])
-        return response
+        _dettach_files_from_messages(response, output)
 
-def dettach_files_from_messages(messages, destination: Path):
+def _dettach_files_from_messages(messages, destination: Path):
     for _, data in messages.items():
         message = email.message_from_bytes(data[b'RFC822'], _class=EmailMessage)
         _dettach_file_from_message(message, destination)
