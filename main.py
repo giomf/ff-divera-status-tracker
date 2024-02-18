@@ -9,7 +9,7 @@ import aggregator
 import fetcher
 
 _DETTACHED_FILES_DIRECTORY = Path('dettached_files')
-_AGGREGATED_OUTPUT_PATH = Path('aggregated_status.xlsx')
+_AGGREGATED_OUTPUT_PATH = Path('status.xlsx')
 
 def main() -> int:
     parser = argparse.ArgumentParser(description='Divera status tracker')
@@ -22,6 +22,7 @@ def main() -> int:
     parser_fetch.add_argument('--subject', type=str, required=True)
 
     parser_aggregator = subparser.add_parser('aggregate')
+    parser_aggregator.add_argument('--output', type=str)
 
 
     args = parser.parse_args()
@@ -33,7 +34,8 @@ def main() -> int:
         if not _DETTACHED_FILES_DIRECTORY.exists:
             print('No attachements to aggregate')
             sys.exit(1)
-        aggregator.aggregate(_DETTACHED_FILES_DIRECTORY, _AGGREGATED_OUTPUT_PATH)
+        output_path = Path(args.output) if args.output else _AGGREGATED_OUTPUT_PATH
+        aggregator.aggregate(_DETTACHED_FILES_DIRECTORY, output_path)
     else:
         parser.print_help()
     return 0
