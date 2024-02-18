@@ -9,9 +9,9 @@ import aggregator
 import fetcher
 import status
 
-_ATTACHMENTS_DIRECTORY = Path('attachments')
-_AGGREGATED_OUTPUT = 'status.xlsx'
-_ON_DUTY_OUTPUT = 'on-duty.xlsx'
+_ATTACHMENTS_DIRECTORY = Path('output/attachments')
+_AGGREGATED_OUTPUT = 'output/status.xlsx'
+_ON_DUTY_OUTPUT = 'output/on-duty.xlsx'
 
 def main() -> int:
     parser = argparse.ArgumentParser(description='Divera status tracker')
@@ -34,7 +34,7 @@ def main() -> int:
 
     args = parser.parse_args()
     if args.command == 'fetch':
-        _ATTACHMENTS_DIRECTORY.mkdir(exist_ok=True)
+        _ATTACHMENTS_DIRECTORY.mkdir(exist_ok=True, parents=True)
         messages = fetcher.fetch_messages(args.host,  args.email, args.password, args.subject)
         fetcher.dettach_files_from_messages(messages, _ATTACHMENTS_DIRECTORY)
     elif args.command == 'aggregate':
