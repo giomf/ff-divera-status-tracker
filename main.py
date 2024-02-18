@@ -8,7 +8,7 @@ from email.message import EmailMessage
 import aggregator
 import fetcher
 
-_DETTACHED_FILES_DIRECTORY = Path('dettached_files')
+_ATTACHMENTS_DIRECTORY = Path('attachments')
 _AGGREGATED_OUTPUT_PATH = Path('status.xlsx')
 
 def main() -> int:
@@ -27,15 +27,15 @@ def main() -> int:
 
     args = parser.parse_args()
     if args.command == 'fetch':
-        _DETTACHED_FILES_DIRECTORY.mkdir(exist_ok=True)
+        _ATTACHMENTS_DIRECTORY.mkdir(exist_ok=True)
         messages = fetcher.fetch_messages(args.host,  args.email, args.password, args.subject)
-        fetcher.dettach_files_from_messages(messages, _DETTACHED_FILES_DIRECTORY)
+        fetcher.dettach_files_from_messages(messages, _ATTACHMENTS_DIRECTORY)
     elif args.command == 'aggregate':
-        if not _DETTACHED_FILES_DIRECTORY.exists:
+        if not _ATTACHMENTS_DIRECTORY.exists:
             print('No attachements to aggregate')
             sys.exit(1)
         output_path = Path(args.output) if args.output else _AGGREGATED_OUTPUT_PATH
-        aggregator.aggregate(_DETTACHED_FILES_DIRECTORY, output_path)
+        aggregator.aggregate(_ATTACHMENTS_DIRECTORY, output_path)
     else:
         parser.print_help()
     return 0
