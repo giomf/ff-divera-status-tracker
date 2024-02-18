@@ -16,13 +16,13 @@ def main() -> int:
     subparser = parser.add_subparsers(dest='command')
 
     parser_fetch = subparser.add_parser('fetch')
-    parser_fetch.add_argument('--host', type=str, required=True)
-    parser_fetch.add_argument('--email', type=str, required=True)
-    parser_fetch.add_argument('--password', type=str, required=True)
-    parser_fetch.add_argument('--subject', type=str, required=True)
+    parser_fetch.add_argument('--host', type=str, required=True, help='imap host')
+    parser_fetch.add_argument('--email', type=str, required=True, help='Email address')
+    parser_fetch.add_argument('--password', type=str, required=True, help='Password')
+    parser_fetch.add_argument('--subject', type=str, required=True, help='Subject for filtering')
 
     parser_aggregator = subparser.add_parser('aggregate')
-    parser_aggregator.add_argument('--output', type=str)
+    parser_aggregator.add_argument('--output', type=str, help='Output path')
 
 
     args = parser.parse_args()
