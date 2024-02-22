@@ -12,14 +12,11 @@
       let pkgs = nixpkgs.legacyPackages.${system};
       in {
         devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            gcc
-            python311Packages.python-lsp-server
-            python311Packages.virtualenv
-          ];
-          env = {
-            LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
-          };
+          buildInputs = with pkgs; [ gcc python311Packages.python-lsp-server python311Packages.virtualenv ];
+          env = { LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib"; };
+          shellHook = ''
+          . venv/bin/activate
+          '';
         };
       });
 }
